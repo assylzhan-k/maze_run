@@ -38,6 +38,7 @@ Fastest route cost: 15
 
 My maze:
 
+<img width="873" height="647" alt="Screenshot 2026-10-27 at 19 21 17" src="https://github.com/user-attachments/assets/4816fe2c-87cc-4971-ade3-d80185aaa43a" />
 
 
 ## Questions
@@ -81,20 +82,13 @@ Milliseconds, 5 runs each, from `java -cp out Bench`.
 
 | maze | Kruskal | Prim |
 |---|---|---|
-| 100 x 100 | | |
-| 300 x 300 | | |
-| 1000 x 1000 | | |
+| 100 x 100 | 8 | 8 |
+| 300 x 300 | 36 | 74 |
+| 1000 x 1000 | 519 | 1692 |
 
 ## Analysis
-The execution time increases as the
-number of cells and edges grows.
-
-Both algorithms use efficient data
-structures, but their runtime depends
-on sorting or priority queue operations.
-
-For grid mazes, the number of walls
-is proportional to the number of cells.
+The execution time of both algorithms increases as the maze size grows. Kruskal was faster than Prim on the larger mazes. For the 1000 x 1000 maze, Kruskal took 519 ms, while Prim took 1692 ms.
+This happens because Kruskal sorts the edges once and uses an efficient Disjoint Set Union (DSU), while Prim performs many priority queue operations.
 
 
 ## Complexity Analysis
