@@ -1,34 +1,91 @@
-/**
- * Missions 1 and 2. Building the maze out of the walls.
- * A wall k joins the cells w.a()[k] and w.b()[k] and costs w.cost()[k]. Indexes start from 0,
- * the line number in walls.txt is the index + 1. The cells are connected by DisjointSet.
- */
+import java.util.*;
 public class Maze {
-
-    /**
-     * Mission 1. Take the walls in the order of the file. Break a wall when its two cells are in different sets.
-     * Returns the indexes of the broken walls, in the order of breaking.
-     */
     public static int[] breakWalls(Input.Walls w) {
-        // TODO
-        return new int[0];
+        DisjointSet dsu = new DisjointSet(w.cells());
+
+        int[] result = new int[w.cells() - 1];
+        int used = 0;
+        for (int k = 0; k < w.count(); k++) {
+            if (dsu.union(w.a()[k], w.b()[k])) {
+                result[used++] = k;
+            }
+
+            if (used == result.length) {
+                break;
+            }
+        }
+        return Arrays.copyOf(result, used);
     }
 
-    /**
-     * Mission 2. Kruskal: the same, but take the walls from the cheapest to the most expensive.
-     * Returns the indexes of the broken walls.
-     */
     public static int[] cheapestMaze(Input.Walls w) {
-        // TODO
-        return new int[0];
-    }
+        Integer[] order = new Integer[w.count()];
 
-    /**
-     * Mission 2. Prim with a priority queue. Returns the total cost of the cheapest maze.
-     * It must be equal to the total cost of cheapestMaze.
-     */
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+
+        Arrays.sort(order, Comparator.comparingInt(i -> w.cost()[i]));
+        DisjointSet dsu = new DisjointSet(w.cells());
+        int[] result = new int[w.cells() - 1];
+        int used = 0;
+
+        for (int k : order) {
+            if (dsu.union(w.a()[k], w.b()[k])) {
+                result[used++] = k;
+            }
+
+            if (used == result.length) {
+                break;
+            }
+        }
+
+        return Arrays.copyOf(result, used);
+    }
     public static long primCost(Input.Walls w) {
-        // TODO
-        return 0;
+        int n = w.cells();
+        int[] degree = new int[n];
+        for (int k = 0; k < w.count(); k++) {
+            degree[w.a()[k]]++;
+            degree[w.b()[k]]++;
+        }
+        int[][] edges = new int[n][];
+
+        for (int i = 0; i < n; i++) {
+            edges[i] = new int[degree[i]];
+        }
+        int[] fill = new int[n];
+        for (int k = 0; k < w.count(); k++) {
+            int a = w.a()[k];
+            int b = w.b()[k];
+
+            edges[a][fill[a]++] = k;
+            edges[b][fill[b]++] = k;
+        }
+        boolean[] visited = new boolean[n];
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(k -> w.cost()[k]));
+        visited[0] = true;
+        for (int k : edges[0]) {
+            pq.add(k);
+        }
+
+        long cost = 0;
+        int seen = 1;
+
+        while (!pq.isEmpty() && seen < n) {
+            int k = pq.poll();
+            int a = w.a()[k];
+            int b = w.b()[k];
+            if (visited[a] && visited[b]) {
+                continue;
+            }
+            int next = visited[a] ? b : a;
+            visited[next] = true;
+            seen++;
+            cost += w.cost()[k];
+            for (int edge : edges[next]) {
+                pq.add(edge);
+            }
+        }
+        return cost;
     }
 }

@@ -1,22 +1,77 @@
-/**
- * Mission 3. Escape: DFS from cell 0 to the last cell (rows * cols - 1) in the maze of Mission 1.
- * Two neighbouring cells are connected when the wall between them is broken.
- * The neighbours are tried in this order: up, right, down, left (cell - cols, cell + 1, cell + cols, cell - 1).
- * The ready method Graphs.open(w, broken) gives you the open neighbours of every cell, in no particular order:
- * to visit them in the required order, go through the four cells above one by one and take those that are in the list.
- * The program must not overflow the stack on a maze of 1000 by 1000 cells.
- */
+import java.util.*;
 public class Escape {
+    public record Result(int[] path, int visited, int deadEnds)
+    {}
+    public static Result escape(Input.Walls w, int[] broken)
+    {
+        int n = w.cells();
+        int cols = w.cols();
+        int[][] g = Graphs.open(w, broken);
+        int deadEnds = 0;
 
-    /**
-     * path: the cells of the way out, from 0 to the last cell.
-     * visited: how many cells are marked as visited at the moment the exit is marked (the start and the exit are counted).
-     * deadEnds: how many cells of the maze have exactly one open neighbour.
-     */
-    public record Result(int[] path, int visited, int deadEnds) {}
+        for (int[] neighbours : g) {
+            if (neighbours.length == 1) {
+                deadEnds++;
+            }
+        }
+        boolean[] seen = new boolean[n];
 
-    public static Result escape(Input.Walls w, int[] broken) {
-        // TODO
-        return new Result(new int[0], 0, 0);
+        int[] parent = new int[n];
+        int[] nextDirection = new int[n];
+        int[] stack = new int[n];
+
+        Arrays.fill(parent, -1);
+        int top = 0;
+        int visited = 1;
+        stack[0] = 0;
+        seen[0] = true;
+
+        while (top >= 0 && !seen[n - 1]) {
+            int u = stack[top];
+
+            if (nextDirection[u] == 4) {
+                top--;
+                continue;
+            }
+            int dir = nextDirection[u]++;
+            int v = switch (dir) {
+                case 0 -> u - cols;
+                case 1 -> u + 1;
+                case 2 -> u + cols;
+                default -> u - 1;
+            };
+            if (v < 0 || v >= n || (dir == 1 && u % cols == cols - 1) || (dir == 3 && u % cols == 0) || seen[v]) {
+                continue;
+            }
+            boolean open = false;
+
+            for (int neighbor : g[u]) {
+                if (neighbor == v) {
+                    open = true;
+                    break;
+                }
+            }
+            if (!open) {
+                continue;
+            }
+            parent[v] = u;
+            seen[v] = true;
+            visited++;
+
+            stack[++top] = v;
+        }
+        if (!seen[n - 1]) {
+            return new Result(new int[0], visited, deadEnds);
+        }
+        int length = 0;
+
+        for (int v = n - 1; v != -1; v = parent[v]) {
+            length++;
+        }
+        int[] path = new int[length];
+        for (int v = n - 1, i = length - 1; i >= 0; v = parent[v], i--) {
+            path[i] = v;
+        }
+        return new Result(path, visited, deadEnds);
     }
 }
