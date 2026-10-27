@@ -3,7 +3,7 @@
 Student ID: 253941
 Name: Assylzhan Kishibayeva
 Group: SE-2512
-Maze size (rows x columns):
+Maze size (rows x columns): 10 * 11
 
 ## Project Description
 
