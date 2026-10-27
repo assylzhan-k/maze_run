@@ -2,28 +2,24 @@ import java.util.*;
 public class Maze {
     public static int[] breakWalls(Input.Walls w) {
         DisjointSet dsu = new DisjointSet(w.cells());
-
         int[] result = new int[w.cells() - 1];
         int used = 0;
         for (int k = 0; k < w.count(); k++) {
             if (dsu.union(w.a()[k], w.b()[k])) {
                 result[used++] = k;
             }
-
             if (used == result.length) {
                 break;
             }
         }
         return Arrays.copyOf(result, used);
     }
-
     public static int[] cheapestMaze(Input.Walls w) {
         Integer[] order = new Integer[w.count()];
 
         for (int i = 0; i < order.length; i++) {
             order[i] = i;
         }
-
         Arrays.sort(order, Comparator.comparingInt(i -> w.cost()[i]));
         DisjointSet dsu = new DisjointSet(w.cells());
         int[] result = new int[w.cells() - 1];
@@ -33,12 +29,10 @@ public class Maze {
             if (dsu.union(w.a()[k], w.b()[k])) {
                 result[used++] = k;
             }
-
             if (used == result.length) {
                 break;
             }
         }
-
         return Arrays.copyOf(result, used);
     }
     public static long primCost(Input.Walls w) {

@@ -1,7 +1,6 @@
 public class DisjointSet {
     private final int[] parent, size;
     private int components;
-
     public DisjointSet(int n) {
         parent = new int[n];
         size = new int[n];
@@ -12,7 +11,6 @@ public class DisjointSet {
             size[i] = 1;
         }
     }
-
     public int find(int x) {
         int root = x;
 

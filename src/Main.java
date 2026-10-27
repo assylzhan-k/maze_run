@@ -8,7 +8,6 @@ import java.io.*;
  *     java -cp out Main examples/tiny/walls.txt examples/tiny/slides.txt
  */
 public class Main {
-
     public static void main(String[] args) throws IOException {
         String wallsFile = args.length >= 2 ? args[0] : "data/walls.txt";
         String slidesFile = args.length >= 2 ? args[1] : "data/slides.txt";

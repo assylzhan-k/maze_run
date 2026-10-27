@@ -3,7 +3,6 @@
  * Run:  java -cp out Bench
  */
 public class Bench {
-
     public static void main(String[] args) {
         System.out.println("size   kruskal_ms (5 runs, then average)   prim_ms (5 runs, then average)");
         for (int size : new int[]{100, 300, 1000}) {
@@ -19,7 +18,6 @@ public class Bench {
             System.out.printf("%-6d %s avg %.0f    %s avg %.0f%n", size, k, ks / 5, p, ps / 5);
         }
     }
-
     static double timeMs(Runnable task) {
         long start = System.nanoTime();
         task.run();
